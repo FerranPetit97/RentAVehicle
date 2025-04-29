@@ -8,4 +8,8 @@ public class Client extends User {
     super(id, name, email, password, role);
   }
 
+  @Override
+  public String toString() {
+    return "Client{" + super.toString() + "}";
+  }
 }
