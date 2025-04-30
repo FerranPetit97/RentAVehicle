@@ -6,7 +6,7 @@ public class TariffController {
   private final TariffService tariffService;
 
   public TariffController(TariffService tariffService) {
-    this.tariffService = new TariffService();
+    this.tariffService = tariffService;
   }
 
   public boolean defineTariff(String vehicleType, double baseRate, double premiumDiscount) {

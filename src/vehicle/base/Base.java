@@ -10,18 +10,20 @@ public class Base {
   private String location;
   private int capacity;
   private List<Vehicle> vehicles;
-  private int x; // Coordenada x
-  private int y; // Coordenada y
-  private boolean isBroken; // Indica si el vehículo está averiado
+  private int x;
+  private int y;
+  private boolean isBroken;
+  private int mechanicId;
 
-  public Base(int id, String location, int capacity, int x, int y) {
+  public Base(int id, String location, int capacity, int x, int y, int mechanicId) {
     this.id = id;
     this.location = location;
     this.capacity = capacity;
     this.x = x;
     this.y = y;
     this.vehicles = new ArrayList<>();
-    this.isBroken = false; // Por defecto, el vehículo no está averiado
+    this.isBroken = false;
+    this.mechanicId = mechanicId;
   }
 
   public int getId() {
@@ -56,11 +58,19 @@ public class Base {
     isBroken = broken;
   }
 
+  public int getMechanicId() {
+    return mechanicId;
+  }
+
+  public void setMechanicId(int mechanicId) {
+    this.mechanicId = mechanicId;
+  }
+
   public boolean addVehicle(Vehicle vehicle) {
     if (vehicles.size() < capacity) {
       return vehicles.add(vehicle);
     }
-    return false; // Base is full
+    return false;
   }
 
   public boolean removeVehicle(Vehicle vehicle) {

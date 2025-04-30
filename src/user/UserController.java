@@ -9,30 +9,8 @@ public class UserController {
     this.userService = userService;
   }
 
-  public boolean addUser(int id, String name, String email, String password, String type) {
-    User createUser;
-    switch (type.toLowerCase()) {
-      case "client":
-        createUser = new user.client.Client(id, name, email, password, type);
-        break;
-      case "manager":
-        createUser = new user.manager.Manager(id, name, email, password);
-        break;
-      case "mechanic":
-        createUser = new user.mechanic.Mechanic(id, name, email, password);
-        break;
-      case "admin":
-        createUser = new user.admin.Admin(id, name, email, password);
-        break;
-      default:
-        return false;
-    }
-    try {
-      return userService.createUser(createUser);
-    } catch (SecurityException e) {
-      System.out.println("Error: " + e.getMessage());
-      return false;
-    }
+  public boolean createUser(int id, String name, String email, String password, String role) {
+    return userService.createUser(id, name, email, password, role);
   }
 
   public List<User> getAllUsers() {
@@ -43,17 +21,21 @@ public class UserController {
     return userService.findUserById(id);
   }
 
-  public boolean deleteUserByEmail(String email) {
-    return userService.deleteUserByEmail(email);
+  public boolean deleteUserById(int id) {
+    return userService.deleteUserById(id);
   }
 
   public boolean updateUserById(User user) {
     try {
-      return userService.updateUserById(user);
+      return userService.updateUser(user);
     } catch (SecurityException e) {
       System.out.println("Error: " + e.getMessage());
       return false;
     }
+  }
+
+  public boolean promoteToPremium(int userId, double discountPercentage) {
+    return userService.promoteToPremium(userId, discountPercentage);
   }
 
   public List<User> getEligibleForPremium() {

@@ -2,6 +2,8 @@ package user.client.premium;
 
 import java.util.List;
 
+import user.client.Client;
+
 public class PremiumController {
   private final PremiumService premiumService;
 
@@ -9,8 +11,8 @@ public class PremiumController {
     this.premiumService = new PremiumService();
   }
 
-  public boolean addPremiumUser(int id, String name, String email, String password, double discountPercentage) {
-    Premium premiumUser = new Premium(id, name, email, password, discountPercentage);
+  public boolean addPremiumUser(Premium user) {
+    Premium premiumUser = new Premium(user);
     return premiumService.addPremiumUser(premiumUser);
   }
 
@@ -20,6 +22,10 @@ public class PremiumController {
 
   public Premium findPremiumUserById(int id) {
     return premiumService.findPremiumUserById(id);
+  }
+
+  public boolean updateClient(Client client) {
+    return clientService.updateClient(client);
   }
 
   public boolean removePremiumUserById(int id) {

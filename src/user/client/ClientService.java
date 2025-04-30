@@ -6,7 +6,7 @@ import java.util.List;
 public class ClientService {
   private final List<Client> clients = new ArrayList<>();
 
-  public boolean addClient(Client client) {
+  public boolean createClient(Client client) {
     return clients.add(client);
   }
 
@@ -19,6 +19,16 @@ public class ClientService {
         .filter(client -> client.getEmail().equalsIgnoreCase(email))
         .findFirst()
         .orElse(null);
+  }
+
+  public boolean updateClient(Client client) {
+    for (int i = 0; i < clients.size(); i++) {
+      if (clients.get(i).getEmail().equalsIgnoreCase(client.getEmail())) {
+        clients.set(i, client);
+        return true;
+      }
+    }
+    return false;
   }
 
   public boolean deleteClientByEmail(String email) {

@@ -6,7 +6,7 @@ public class MaintenanceController {
   private final MaintenanceService maintenanceService;
 
   public MaintenanceController(MaintenanceService maintenanceService) {
-    this.maintenanceService = new MaintenanceService();
+    this.maintenanceService = maintenanceService;
   }
 
   public boolean addTask(Maintenance task) {

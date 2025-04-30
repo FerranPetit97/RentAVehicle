@@ -7,7 +7,7 @@ public class Premium extends Client {
   private boolean canReserveVehicles; // Premium reservation feature
 
   public Premium(int id, String name, String email, String password, double discountPercentage) {
-    super(id, name, email, password, "premium");
+    super(id, name, email, password);
     this.discountPercentage = discountPercentage;
     this.canReserveVehicles = true; // Premium users can reserve vehicles
   }
@@ -30,7 +30,6 @@ public class Premium extends Client {
 
   @Override
   public String toString() {
-    return "Premium{" + super.toString() + ", discountPercentage=" + discountPercentage +
-           ", canReserveVehicles=" + canReserveVehicles + "}";
+      return super.toString(); // Llama al método toString() de User
   }
 }

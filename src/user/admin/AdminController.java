@@ -1,62 +1,89 @@
 package user.admin;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import user.User;
-import user.UserController;
-import user.client.premium.Premium;
-
-import vehicle.VehicleController;
-
-import notify.NotifyController;
-import notify.enums.NotifyCodeEnum;
+import vehicle.Vehicle;
+import vehicle.usage.Usage;
+import task.Task;
 
 public class AdminController {
   private final AdminService adminService;
-  private final NotifyController notifyController;
-  private final VehicleController vehicleController;
-  private final UserController userController;
 
-  public AdminController(UserController userController, AdminService adminService, VehicleController vehicleController,
-      NotifyController notifyController) {
+  public AdminController(AdminService adminService) {
     this.adminService = adminService;
-    this.vehicleController = vehicleController;
-    this.userController = userController;
-    this.notifyController = notifyController;
   }
 
-  public boolean registerUser(int id, String name, String email, String password, String type) {
-    try {
-      return adminService.createUser(id, name, email, password, type);
-    } catch (SecurityException e) {
-      this.notifyController.log(NotifyCodeEnum.UNAUTHORIZED, "Permission denied: " + e.getMessage());
-      return false;
-    }
+  public List<Admin> getAllAdmins() {
+    return adminService.getAllAdmins();
+  }
+
+  public boolean createUser(int id, String name, String email, String password, String type) {
+    return adminService.createUser(id, name, email, password, type);
   }
 
   public List<User> getAllUsers() {
-    return userController.getAllUsers();
+    return adminService.getAllUsers();
   }
 
   public List<User> getEligibleForPremium() {
-    return userController.getEligibleForPremium();
+    return adminService.getEligibleForPremium();
+  }
+
+  public boolean updateUserById(int id, String name, String email, String password, String role) {
+    return adminService.updateUserById(id, name, email, password, role);
   }
 
   public boolean promoteToPremium(int userId, double discountPercentage) {
-    User user = userController.getAllUsers().stream()
-        .filter(u -> u.getId() == userId)
-        .findFirst()
-        .orElse(null);
-    if (user != null) {
-      Premium premiumUser = new Premium(user.getId(), user.getName(), user.getEmail(),
-          user.getPassword(), discountPercentage);
-      userController.deleteUserByEmail(user.getEmail());
-      return userController.addUser(premiumUser.getId(), premiumUser.getName(), premiumUser.getEmail(), premiumUser.getPassword(), premiumUser.getRole());
-    }
-    return false;
+    return adminService.promoteToPremium(userId, discountPercentage);
   }
 
-  public List<String> getBatteriesLevel() {
-    return vehicleController.getVehiclesAndBatteryLevels();
+  public boolean deleteUserById(int id) {
+    return adminService.deleteUserById(id);
+  }
+
+  public List<Task> getAllTasks() {
+    return adminService.getAllTasks();
+  }
+
+  public List<String> getVehiclesAndBatteryLevels() {
+    return adminService.getVehiclesAndBatteryLevels();
+  }
+
+  public List<String> getAllBasesInfo() {
+    return adminService.getAllBasesInfo();
+  }
+
+  public List<String> getAllTripsInfo() {
+    return adminService.getAllTripsInfo();
+  }
+
+  public List<Usage> getAllUsageRecords() {
+    return adminService.getAllUsageRecords();
+  }
+
+  public boolean assignVehicleToMechanic(int vehicleId, int mechanicId) {
+    return adminService.assignVehicleToMechanic(vehicleId, mechanicId);
+  }
+
+  public List<String> getVehiclesWithUsersAndTariffs() {
+    return adminService.getVehiclesWithUsersAndTariffs();
+  }
+
+  public List<Vehicle> getVehiclesInUseDuring(LocalDateTime start, LocalDateTime end) {
+    return adminService.getVehiclesInUseDuring(start, end);
+  }
+
+  public boolean addVehicle(int id, String type, boolean isAvailable, boolean hasNoDamage, int batteryLevel) {
+    return adminService.addVehicle(id, type, isAvailable, hasNoDamage, batteryLevel);
+  }
+
+  public boolean updateVehicle(int id, boolean isAvailable, boolean hasNoDamage, int batteryLevel) {
+    return adminService.updateVehicle(id, isAvailable, hasNoDamage, batteryLevel);
+  }
+
+  public boolean deleteVehicle(int id) {
+    return adminService.deleteVehicle(id);
   }
 }

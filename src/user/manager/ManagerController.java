@@ -5,13 +5,17 @@ import java.util.List;
 public class ManagerController {
   private final ManagerService managerService;
 
-  public ManagerController() {
-    this.managerService = new ManagerService();
+  public ManagerController(ManagerService managerService) {
+    this.managerService = managerService;
   }
 
-  public boolean addManager(int id, String name, String email, String password) {
-    Manager manager = new Manager(id, name, email, password);
-    return managerService.addManager(manager);
+  public boolean createManager(Manager user) {
+    return managerService.addManager(user);
+  }
+
+  
+  public boolean setVehicleToWork(Manager manager, int vehicleId) {
+    return managerService.setVehicleToWork(manager, vehicleId);
   }
 
   public List<Manager> getAllManagers() {

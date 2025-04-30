@@ -9,7 +9,7 @@ public class RepairController {
   private final RepairService repairService;
 
   public RepairController(RepairService repairService) {
-    this.repairService = new RepairService();
+    this.repairService = repairService;
   }
 
   public boolean createRepairTask(int id, String description, Vehicle vehicle, Base base) {

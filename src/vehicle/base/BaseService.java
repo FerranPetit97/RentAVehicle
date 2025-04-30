@@ -1,9 +1,13 @@
 package vehicle.base;
 
 import vehicle.Vehicle;
+import vehicle.usage.Usage;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import utils.DistanceCalculator;
 
@@ -58,7 +62,32 @@ public class BaseService {
         }
       }
     }
-
     return nearestBase;
+  }
+
+  public Map<String, Base> getDemandStatistics(List<Usage> usageRecords) {
+    Map<Integer, Integer> baseUsageCount = new HashMap<>();
+
+    for (Usage usage : usageRecords) {
+      Vehicle vehicle = usage.getVehicle();
+      Base base = findBaseById(vehicle.getX());
+      if (base != null) {
+        baseUsageCount.put(base.getId(), baseUsageCount.getOrDefault(base.getId(), 0) + 1);
+      }
+    }
+
+    Base mostDemandedBase = bases.stream()
+        .max(Comparator.comparingInt(base -> baseUsageCount.getOrDefault(base.getId(), 0)))
+        .orElse(null);
+
+    Base leastDemandedBase = bases.stream()
+        .min(Comparator.comparingInt(base -> baseUsageCount.getOrDefault(base.getId(), 0)))
+        .orElse(null);
+
+    // Retornar las estadísticas
+    Map<String, Base> statistics = new HashMap<>();
+    statistics.put("mostDemanded", mostDemandedBase);
+    statistics.put("leastDemanded", leastDemandedBase);
+    return statistics;
   }
 }

@@ -1,198 +1,149 @@
-import java.util.List;
-import java.util.Map;
-
-import tariff.Tariff;
-import tariff.TariffController;
-import tariff.TariffFactory;
-import task.maintenance.Maintenance;
-import task.maintenance.MaintenanceController;
-import task.maintenance.MaintenanceFactory;
-import task.repair.Repair;
-import task.repair.RepairController;
-import task.repair.RepairFactory;
-import user.User;
-import user.admin.Admin;
-import user.admin.AdminController;
-import user.admin.AdminFactory;
-import vehicle.base.Base;
-import vehicle.base.BaseController;
-import vehicle.Vehicle;
-import vehicle.VehicleController;
-import vehicle.VehicleFactory;
-import vehicle.bicycle.Bicycle;
-import vehicle.skate.Skate;
-import vehicle.motorbike.Motorbike;
-
-import city.City;
-import city.CityController;
-import city.CityFactory;
+import city.*;
+import notify.*;
+import notify.enums.NotifyCodeEnum;
+import tariff.*;
+import task.*;
+import task.maintenance.*;
+import user.*;
+import user.admin.*;
+import user.client.*;
+import user.client.premium.*;
+import user.manager.*;
+import user.mechanic.*;
+import vehicle.*;
+import vehicle.base.*;
+import vehicle.usage.*;
 
 public class Main {
-
-    private CityController cityController;
-    private AdminController adminController;
-    private BaseController baseController;
-    private VehicleController vehicleController;
-    private TariffController tariffController;
-    private MaintenanceController maintenanceController;
-    private RepairController repairController;
-
     public static void main(String[] args) {
-        Main main = new Main();
-        main.run();
-    }
+        // Inicializar dependencias
+        NotifyService notifyService = new NotifyService();
+        NotifyController notifyController = new NotifyController(notifyService);
 
-    public void run() {
+        City city = new City(-100, 100, -100, 100);
+        CityService cityService = new CityService(city);
+        CityController cityController = new CityController(cityService);
 
-        Admin adminUser = new Admin(1, "Admin", "admin@gmail.com", "123456");
+        VehicleService vehicleService = new VehicleService(
+            cityController,
+            new MaintenanceController(new MaintenanceService()),
+            notifyController,
+            null, // Se inicializará más adelante
+            new UsageController(new UsageService())
+        );
+        VehicleController vehicleController = new VehicleController(vehicleService);
 
-        // Initialize controllers
-        City city = new City(0, 100, 0, 100);
-        cityController = CityFactory.getInstance(city);
-        adminController = AdminFactory.getInstance(adminUser);
-        baseController = new BaseController();
-        maintenanceController = MaintenanceFactory.getInstance();
-        repairController = RepairFactory.getInstance();
-        vehicleController = VehicleFactory.getInstance();
-        tariffController = TariffFactory.getInstance();
+        BaseService baseService = new BaseService();
+        BaseController baseController = new BaseController(baseService, notifyController);
 
-        // Add users
-        printSectionHeader("Adding Users");
-        adminController.registerUser(2, "Ferran", "ferran@gmail.com", "123456", "client");
-        adminController.registerUser(3, "Maria", "maria@gmail.com", "123456", "client");
-        adminController.registerUser(4, "Antonio", "antonio@gmail.com", "123456", "manager");
-        adminController.registerUser(5, "Luis", "luis@gmail.com", "123456", "mechanic");
-        adminController.registerUser(6, "Admin", "admin@gmail.com", "admin123", "admin");
-        printUsers(adminController.getAllUsers());
+        TariffService tariffService = new TariffService();
+        TariffController tariffController = new TariffController(tariffService);
 
-        // Add bases
-        printSectionHeader("Adding Bases");
-        baseController.addBase(1, "Central Park", 5, 10, 20);
-        baseController.addBase(2, "Downtown", 3, 50, 50);
-        printBases(baseController.getAllBases());
+        ClientService clientService = new ClientService();
+        ClientController clientController = new ClientController(clientService);
 
-        // Add vehicles
-        printSectionHeader("Adding Vehicles");
-        vehicleController.addVehicle(new Bicycle(1, true, true));
-        vehicleController.addVehicle(new Skate(2, true, true, 80));
-        vehicleController.addVehicle(new Motorbike(3, true, true, 100));
-        vehicleController.addVehicle(new Bicycle(4, true, true));
-        vehicleController.addVehicle(new Skate(5, true, true, 60));
-        printVehicles(vehicleController.getAllVehicles());
+        PremiumController premiumController = new PremiumController();
 
-        // Define tariffs
-        printSectionHeader("Defining Tariffs");
-        tariffController.defineTariff("bicycle", 0.5, 10.0); // $0.5 per minute, 10% discount for premium
-        tariffController.defineTariff("skate", 0.7, 15.0); // $0.7 per minute, 15% discount for premium
-        tariffController.defineTariff("motorbike", 1.0, 20.0); // $1.0 per minute, 20% discount for premium
-        printTariffs(tariffController.getAllTariffs());
+        MechanicService mechanicService = new MechanicService(vehicleController, notifyController);
+        MechanicController mechanicController = new MechanicController(mechanicService);
 
-        // Assign vehicles to bases
-        printSectionHeader("Assigning Vehicles to Bases");
-        baseController.addVehicleToBase(1, vehicleController.findVehicleById(1)); // Bicycle to Central Park
-        baseController.addVehicleToBase(1, vehicleController.findVehicleById(2)); // Skate to Central Park
-        baseController.addVehicleToBase(2, vehicleController.findVehicleById(3)); // Motorbike to Downtown
-        baseController.addVehicleToBase(2, vehicleController.findVehicleById(4)); // Bicycle to Downtown
-        printBaseVehicles(baseController);
+        ManagerService managerService = new ManagerService(vehicleController, notifyController);
+        ManagerController managerController = new ManagerController(managerService);
 
-        // Update vehicle location
-        printSectionHeader("Updating Vehicle Location");
-        boolean success = vehicleController.updateVehicleLocation(3, 50, 50); // Within city limits
-        System.out.println("Update successful: " + success);
-        success = vehicleController.updateVehicleLocation(3, 150, 50); // Outside city limits
-        System.out.println("Update successful: " + success);
+        UsageController usageController = new UsageController(new UsageService());
 
-        // Start and end trips
-        printSectionHeader("Starting and Ending Trips");
-        success = vehicleController.startTrip(3, false); // Motorbike, not premium
-        System.out.println("Can start trip: " + success);
-        vehicleController.endTrip(3, 50, "Downtown Base"); // 50 minutes trip
+        UserService userService = new UserService(clientController, premiumController, mechanicController,
+            managerController, notifyController, usageController);
+        UserController userController = new UserController(userService);
 
-        // Simulate a trip that depletes the battery
-        printSectionHeader("Simulating Battery Depletion");
-        vehicleController.startTrip(2, false); // Start a trip with a Skate (not premium)
-        vehicleController.endTrip(2, 200, "Central Park Base"); // 200 minutes trip, depletes battery
-        printMaintenanceTasks(maintenanceController.getAllTasks());
+        // Actualizar la dependencia de UserController en VehicleService
+        vehicleService = new VehicleService(
+            cityController,
+            new MaintenanceController(new MaintenanceService()),
+            notifyController,
+            userController,
+            usageController
+        );
 
-        // Report and complete repair tasks
-        printSectionHeader("Reporting and Completing Repairs");
-        repairController.createRepairTask(1, "Flat tire", vehicleController.findVehicleById(2), null); // Vehicle issue
-        repairController.createRepairTask(2, "Broken charging station", null, baseController.findBaseById(1)); // Base issue
-        printRepairTasks(repairController.getAllRepairTasks());
-        repairController.completeRepairTask(1, 50.0); // Repair cost: $50
-        repairController.completeRepairTask(2, 100.0); // Repair cost: $100
-        printRepairTasks(repairController.getAllRepairTasks());
+        AdminService adminService = new AdminService(userController);
+        AdminController adminController = new AdminController(adminService);
 
-        // Find nearest vehicle and base
-        printSectionHeader("Finding Nearest Vehicle and Base");
-        int userX = 30, userY = 40;
-        String vehicleType = "motorbike";
-        Vehicle nearestVehicle = vehicleController.findNearestVehicle(vehicleType, userX, userY);
-        System.out.println("Nearest " + vehicleType + ": " + (nearestVehicle != null ? nearestVehicle : "None found"));
-        Base nearestBase = baseController.findNearestBaseWithVehicles(userX, userY);
-        System.out.println("Nearest base: " + (nearestBase != null ? nearestBase : "None found"));
-    }
+        // === Gestión de Usuarios ===
+        System.out.println("=== Gestión de Usuarios ===");
+        adminController.createUser(1, "John Doe", "john@example.com", "password", "client");
+        adminController.createUser(2, "Alice Mechanic", "alice@mechanics.com", "password", "mechanic");
+        adminController.createUser(3, "Bob Manager", "bob@managers.com", "password", "manager");
 
-    private void printSectionHeader(String title) {
-        System.out.println("\n--------------------");
-        System.out.println(title.toUpperCase());
-        System.out.println("--------------------");
-    }
+        System.out.println("\nUsuarios registrados:");
+        adminController.getAllUsers().forEach(System.out::println);
 
-    private void printUsers(List<User> users) {
-        System.out.printf("%-5s %-15s %-25s %-10s%n", "ID", "Name", "Email", "Role");
-        for (User user : users) {
-            System.out.printf("%-5d %-15s %-25s %-10s%n", user.getId(), user.getName(), user.getEmail(), user.getRole());
-        }
-    }
+        System.out.println("\nUsuarios elegibles para premium:");
+        adminController.getEligibleForPremium().forEach(System.out::println);
 
-    private void printBases(List<Base> bases) {
-        System.out.printf("%-5s %-15s %-10s %-15s %-10s%n", "ID", "Location", "Capacity", "Coordinates", "Broken");
-        for (Base base : bases) {
-            System.out.printf("%-5d %-15s %-10d (%-3d,%-3d)   %-10s%n", base.getId(), base.getLocation(),
-                    base.getCapacity(), base.getX(), base.getY(), base.isBroken());
-        }
-    }
+        System.out.println("\nPromoviendo a premium...");
+        adminController.promoteToPremium(1, 10.0);
 
-    private void printVehicles(List<Vehicle> vehicles) {
-        System.out.printf("%-5s %-15s %-10s %-10s %-10s%n", "ID", "Type", "Available", "Battery", "Broken");
-        for (Vehicle vehicle : vehicles) {
-            System.out.printf("%-5d %-15s %-10s %-10d %-10s%n", vehicle.getId(), vehicle.getType(),
-                    vehicle.isAvailable(), vehicle.getBatteryLevel(), vehicle.isBroken());
-        }
-    }
+        System.out.println("\nUsuarios después de la promoción:");
+        adminController.getAllUsers().forEach(System.out::println);
 
-    private void printTariffs(Map<String, Tariff> tariffs) {
-        System.out.printf("%-15s %-15s %-20s%n", "Type", "Base Rate", "Premium Discount");
-        for (Map.Entry<String, Tariff> entry : tariffs.entrySet()) {
-            Tariff tariff = entry.getValue();
-            System.out.printf("%-15s %-15.2f %-20.2f%n", entry.getKey(), tariff.getBaseRate(), tariff.getPremiumDiscount());
-        }
-    }
+        // === Gestión de Vehículos ===
+        System.out.println("\n=== Gestión de Vehículos ===");
+        adminController.addVehicle(1, "bicycle", true, true, 100);
+        adminController.addVehicle(2, "skate", true, true, 80);
+        adminController.addVehicle(3, "motorbike", true, true, 50);
 
-    private void printBaseVehicles(BaseController baseController) {
-        for (Base base : baseController.getAllBases()) {
-            System.out.printf("Base %-5d (%-15s):%n", base.getId(), base.getLocation());
-            for (Vehicle vehicle : base.getVehicles()) {
-                System.out.printf("\t%-5d %-15s %-10s %-10d %-10s%n", vehicle.getId(), vehicle.getType(),
-                        vehicle.isAvailable(), vehicle.getBatteryLevel(), vehicle.isBroken());
-            }
-        }
-    }
+        System.out.println("\nVehículos registrados:");
+        vehicleController.getAllVehicles().forEach(System.out::println);
 
-    private void printMaintenanceTasks(List<Maintenance> tasks) {
-        System.out.printf("%-5s %-20s %-15s %-15s %-15s %-10s%n", "ID", "Description", "Vehicle", "Pickup", "Dropoff", "Completed");
-        for (Maintenance task : tasks) {
-            System.out.printf("%-5d %-20s %-15s %-15s %-15s %-10s%n", task.getId(), task.getDescription(),
-                    task.getVehicle(), task.getPickupLocation(), task.getDropOffLocation(), task.isCompleted());
-        }
-    }
+        System.out.println("\nIniciando un viaje...");
+        vehicleController.startTrip(1, 1, false);
 
-    private void printRepairTasks(List<Repair> tasks) {
-        System.out.printf("%-5s %-20s %-20s %-10s %-10s%n", "ID", "Description", "Vehicle/Base", "Cost", "Completed");
-        for (Repair task : tasks) {
-            System.out.printf("%-5d %-20s %-20s %-10.2f %-10s%n", task.getId(), task.getDescription(),
-                    (task.getVehicle() != null ? task.getVehicle() : task.getBase()), task.getCost(), task.isCompleted());
-        }
+        System.out.println("\nVehículos después de iniciar el viaje:");
+        vehicleController.getAllVehicles().forEach(System.out::println);
+
+        System.out.println("\nFinalizando el viaje...");
+        vehicleController.endTrip(1, 30, "Base Central");
+
+        System.out.println("\nVehículos después de finalizar el viaje:");
+        vehicleController.getAllVehicles().forEach(System.out::println);
+
+        // === Gestión de Bases ===
+        System.out.println("\n=== Gestión de Bases ===");
+        baseController.addBase(1, "Base Central", 10, 0, 0, 3);
+        baseController.addBase(2, "Base Norte", 5, 50, 50, 3);
+
+        System.out.println("\nBases registradas:");
+        baseController.getAllBases().forEach(System.out::println);
+
+        System.out.println("\nAgregando vehículo a la base...");
+        baseController.addVehicleToBase(1, vehicleController.findVehicleById(1));
+
+        System.out.println("\nBases después de agregar vehículo:");
+        baseController.getAllBases().forEach(System.out::println);
+
+        // === Gestión de Tareas ===
+        System.out.println("\n=== Gestión de Tareas ===");
+        TaskController taskController = new TaskController(new TaskService());
+        taskController.createMaintenanceTask(1, "Revisar batería", vehicleController.findVehicleById(1), "Base Central", "Base Norte");
+
+        System.out.println("\nTareas registradas:");
+        taskController.getAllTasks().forEach(System.out::println);
+
+        // === Gestión de Tarifas ===
+        System.out.println("\n=== Gestión de Tarifas ===");
+        tariffController.defineTariff("bicycle", 0.5, 10.0);
+        tariffController.defineTariff("skate", 0.8, 15.0);
+        tariffController.defineTariff("motorbike", 1.2, 20.0);
+
+        System.out.println("\nTarifas definidas:");
+        tariffController.getAllTariffs().forEach((type, tariff) -> System.out.println(tariff));
+
+        // === Notificaciones ===
+        System.out.println("\n=== Notificaciones ===");
+        notifyController.log(NotifyCodeEnum.BAD_REQUEST, "Invalid input data");
+        notifyController.log(NotifyCodeEnum.NOT_FOUND, "Resource not found");
+
+        System.out.println("\nErrores registrados:");
+        notifyController.getAllErrors().forEach(System.out::println);
     }
 }

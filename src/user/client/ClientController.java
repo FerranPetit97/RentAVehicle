@@ -5,13 +5,12 @@ import java.util.List;
 public class ClientController {
   private final ClientService clientService;
 
-  public ClientController() {
-    this.clientService = new ClientService();
+  public ClientController(ClientService clientService) {
+    this.clientService = clientService;
   }
 
-  public boolean addClient(int id, String name, String email, String password, String role) {
-    Client client = new Client(id, name, email, password, role);
-    return clientService.addClient(client);
+  public boolean createClient(Client user) {
+    return clientService.createClient(user);
   }
 
   public List<Client> getAllClients() {
@@ -20,6 +19,10 @@ public class ClientController {
 
   public Client findClientByEmail(String email) {
     return clientService.findClientByEmail(email);
+  }
+
+  public boolean updateClient(Client client) {
+    return clientService.updateClient(client);
   }
 
   public boolean deleteClientByEmail(String email) {

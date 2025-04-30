@@ -2,13 +2,11 @@ package vehicle;
 
 import java.util.List;
 
-import user.User;
-
 public class VehicleController {
   private final VehicleService vehicleService;
 
-  public VehicleController() {
-    this.vehicleService = new VehicleService();
+  public VehicleController(VehicleService vehicleService) {
+    this.vehicleService = vehicleService;
   }
 
   public boolean addVehicle(Vehicle vehicle) {
@@ -35,8 +33,8 @@ public class VehicleController {
     return vehicleService.updateVehicleLocation(id, x, y);
   }
 
-  public boolean startTrip(int vehicleId, boolean isPremium) {
-    return vehicleService.startTrip(vehicleId, isPremium);
+  public boolean startTrip(int vehicleId, int userId, boolean isPremium) {
+    return vehicleService.startTrip(vehicleId, userId, isPremium);
   }
 
   public void endTrip(int vehicleId, int minutes, String dropOffLocation) {

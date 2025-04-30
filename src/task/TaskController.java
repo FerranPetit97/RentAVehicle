@@ -11,7 +11,7 @@ public class TaskController {
   private final TaskService taskService;
 
   public TaskController(TaskService taskService) {
-    this.taskService = new TaskService();
+    this.taskService = taskService;
   }
 
   public boolean createMaintenanceTask(int id, String description, Vehicle vehicle, String pickupLocation, String dropOffLocation) {

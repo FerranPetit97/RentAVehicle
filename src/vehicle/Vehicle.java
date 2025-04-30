@@ -1,5 +1,7 @@
 package vehicle;
 
+import user.User;
+
 public abstract class Vehicle {
   private int id;
   private String type;
@@ -9,6 +11,7 @@ public abstract class Vehicle {
   private int x;
   private int y;
   private boolean isBroken;
+  private User user;
 
   public Vehicle(int id, String type, boolean isAvailable, boolean hasNoDamage, int batteryLevel) {
     this.id = id;
@@ -16,7 +19,7 @@ public abstract class Vehicle {
     this.isAvailable = isAvailable;
     this.hasNoDamage = hasNoDamage;
     this.batteryLevel = batteryLevel;
-    this.x = 0; 
+    this.x = 0;
     this.y = 0;
     this.isBroken = false;
   }
@@ -83,6 +86,14 @@ public abstract class Vehicle {
 
   public void setBatteryLevel(int batteryLevel) {
     this.batteryLevel = batteryLevel;
+  }
+
+  public User getUser() {
+    return user;
+  }
+
+  public void setUser(User user) {
+    this.user = user;
   }
 
   public boolean canStartTrip(boolean isPremium) {

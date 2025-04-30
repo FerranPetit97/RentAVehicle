@@ -7,8 +7,8 @@ import notify.enums.NotifyCodeEnum;
 public class NotifyController {
     private final NotifyService notifyService;
 
-    public NotifyController(NotifyService errorService) {
-        this.notifyService = new NotifyService();
+    public NotifyController(NotifyService notifyService) {
+        this.notifyService = notifyService;
     }
 
     public void log(NotifyCodeEnum code, String message) {
