@@ -9,8 +9,8 @@ public class VehicleController {
     this.vehicleService = vehicleService;
   }
 
-  public boolean addVehicle(Vehicle vehicle) {
-    return vehicleService.addVehicle(vehicle);
+  public boolean addVehicle(int id, String type, boolean isAvailable, boolean hasNoDamage, int batteryLevel) {
+    return vehicleService.addVehicle(id, type, isAvailable, hasNoDamage, batteryLevel);
   }
 
   public List<Vehicle> getAllVehicles() {
@@ -31,14 +31,6 @@ public class VehicleController {
 
   public boolean updateVehicleLocation(int id, int x, int y) {
     return vehicleService.updateVehicleLocation(id, x, y);
-  }
-
-  public boolean startTrip(int vehicleId, int userId, boolean isPremium) {
-    return vehicleService.startTrip(vehicleId, userId, isPremium);
-  }
-
-  public void endTrip(int vehicleId, int minutes, String dropOffLocation) {
-    vehicleService.endTrip(vehicleId, minutes, dropOffLocation);
   }
 
   public Vehicle findNearestVehicle(String vehicleType, int userX, int userY) {

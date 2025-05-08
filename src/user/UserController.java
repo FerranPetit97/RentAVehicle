@@ -2,6 +2,10 @@ package user;
 
 import java.util.List;
 
+import user.client.Client;
+import user.manager.Manager;
+import user.mechanic.Mechanic;
+
 public class UserController {
   private final UserService userService;
 
@@ -9,8 +13,16 @@ public class UserController {
     this.userService = userService;
   }
 
-  public boolean createUser(int id, String name, String email, String password, String role) {
-    return userService.createUser(id, name, email, password, role);
+  public boolean createClient(Client user) {
+    return userService.createClient(user);
+  }
+
+  public boolean createMechanic(Mechanic user) {
+    return userService.createMechanic(user);
+  }
+
+  public boolean createManager(Manager user) {
+    return userService.createManager(user);
   }
 
   public List<User> getAllUsers() {
@@ -21,24 +33,19 @@ public class UserController {
     return userService.findUserById(id);
   }
 
+  public boolean updateUser(int id, String name, String email, String password, String role, int vehicleId) {
+    return userService.updateUser(id, name, email, password, role, vehicleId);
+  }
+
   public boolean deleteUserById(int id) {
     return userService.deleteUserById(id);
   }
 
-  public boolean updateUserById(User user) {
-    try {
-      return userService.updateUser(user);
-    } catch (SecurityException e) {
-      System.out.println("Error: " + e.getMessage());
-      return false;
-    }
-  }
+  // public boolean promoteToPremium(int userId, double discountPercentage) {
+  //   return userService.promoteToPremium(userId, discountPercentage);
+  // }
 
-  public boolean promoteToPremium(int userId, double discountPercentage) {
-    return userService.promoteToPremium(userId, discountPercentage);
-  }
-
-  public List<User> getEligibleForPremium() {
-    return userService.getEligibleForPremium();
-  }
+  // public List<User> getEligibleForPremium() {
+  //   return userService.getEligibleForPremium();
+  // }
 }

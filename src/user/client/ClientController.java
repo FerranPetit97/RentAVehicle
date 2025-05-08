@@ -9,23 +9,12 @@ public class ClientController {
     this.clientService = clientService;
   }
 
-  public boolean createClient(Client user) {
-    return clientService.createClient(user);
-  }
-
   public List<Client> getAllClients() {
     return clientService.getAllClients();
   }
-
-  public Client findClientByEmail(String email) {
-    return clientService.findClientByEmail(email);
+  
+  public Client findClientById(int id) {
+    return clientService.findClientById(id);
   }
 
-  public boolean updateClient(Client client) {
-    return clientService.updateClient(client);
-  }
-
-  public boolean deleteClientByEmail(String email) {
-    return clientService.deleteClientByEmail(email);
-  }
 }

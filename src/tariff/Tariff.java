@@ -1,9 +1,9 @@
 package tariff;
 
 public class Tariff {
-  private String vehicleType; // "bicycle", "skate", "motorbike"
-  private double baseRate; // Base rate per minute or per kilometer
-  private double premiumDiscount; // Discount percentage for premium users
+  private String vehicleType;
+  private double baseRate;
+  private double premiumDiscount;
 
   public Tariff(String vehicleType, double baseRate, double premiumDiscount) {
     this.vehicleType = vehicleType;
@@ -29,6 +29,11 @@ public class Tariff {
 
   public double getPremiumDiscount() {
     return premiumDiscount;
+  }
+
+  public double calculateCost(int hours, boolean isPremium) {
+    double rate = calculateRate(isPremium);
+    return rate * hours;
   }
 
   public void setPremiumDiscount(double premiumDiscount) {

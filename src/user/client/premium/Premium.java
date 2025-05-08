@@ -3,13 +3,13 @@ package user.client.premium;
 import user.client.Client;
 
 public class Premium extends Client {
-  private double discountPercentage; // Discount for premium users
-  private boolean canReserveVehicles; // Premium reservation feature
+  private double discountPercentage;
+  private boolean canReserveVehicles;
 
-  public Premium(int id, String name, String email, String password, double discountPercentage) {
-    super(id, name, email, password);
+  public Premium(int id, String name, String email, String password, double balance, double discountPercentage) {
+    super(id, name, email, password, balance);
     this.discountPercentage = discountPercentage;
-    this.canReserveVehicles = true; // Premium users can reserve vehicles
+    this.canReserveVehicles = true;
   }
 
   public double getDiscountPercentage() {
@@ -28,8 +28,4 @@ public class Premium extends Client {
     this.canReserveVehicles = canReserveVehicles;
   }
 
-  @Override
-  public String toString() {
-      return super.toString(); // Llama al método toString() de User
-  }
 }

@@ -1,23 +1,29 @@
-package vehicle.usage;
+package vehicle.rental;
 
 import java.time.LocalDateTime;
 
 import user.User;
 import vehicle.Vehicle;
+import vehicle.base.Base;
 
-public class Usage {
+public class Rent {
     private int id;
     private Vehicle vehicle;
     private User user;
+    private Base startBase;
+    private Base endBase;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+    private double cost;
 
-    public Usage(int id, Vehicle vehicle, User user, LocalDateTime startTime) {
+    public Rent(int id, Vehicle vehicle, User user, LocalDateTime startTime, Base startBase) {
         this.id = id;
         this.vehicle = vehicle;
         this.user = user;
-        this.startTime = startTime;
-        this.endTime = null; // End time is null until the trip ends
+        this.startBase = startBase;
+        this.startTime = LocalDateTime.now();
+        this.endTime = null;
+        this.cost = 0.0;
     }
 
     public int getId() {
@@ -40,6 +46,14 @@ public class Usage {
         return endTime;
     }
 
+    public double getCost() {
+        return cost;
+    }
+
+    public void setCost(double cost) {
+        this.cost = cost;
+    }
+
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
     }
@@ -53,7 +67,7 @@ public class Usage {
 
     @Override
     public String toString() {
-        return "Usage{id=" + id + ", vehicle=" + vehicle + ", user=" + user +
-               ", startTime=" + startTime + ", endTime=" + endTime + "}";
+        return "{id=" + id + ", vehicle=" + vehicle + ", user=" + user +
+                ", startTime=" + startTime + ", endTime=" + endTime + ", cost=" + cost + "}";
     }
 }

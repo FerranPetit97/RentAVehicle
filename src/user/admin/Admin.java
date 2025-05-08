@@ -8,8 +8,7 @@ public class Admin extends User {
     super(id, name, email, password, "admin");
   }
 
-  @Override
   public String toString() {
-    return "Admin{" + super.toString() + "}";
+    return super.toString() + '}';
   }
 }

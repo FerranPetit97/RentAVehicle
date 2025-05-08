@@ -5,7 +5,7 @@ import java.util.List;
 
 import user.User;
 import vehicle.Vehicle;
-import vehicle.usage.Usage;
+import vehicle.rental.Rent;
 import task.Task;
 
 public class AdminController {
@@ -15,40 +15,44 @@ public class AdminController {
     this.adminService = adminService;
   }
 
-  public List<Admin> getAllAdmins() {
-    return adminService.getAllAdmins();
+  public boolean createClient(int id, String name, String email, String password, double balance) {
+    return adminService.createClient(id, name, email, password, balance);
   }
 
-  public boolean createUser(int id, String name, String email, String password, String type) {
-    return adminService.createUser(id, name, email, password, type);
+  public boolean createMechanic(int id, String name, String email, String password) {
+    return adminService.createMechanic(id, name, email, password);
+  }
+
+  public boolean createManager(int id, String name, String email, String password) {
+    return adminService.createManager(id, name, email, password);
   }
 
   public List<User> getAllUsers() {
     return adminService.getAllUsers();
   }
 
-  public List<User> getEligibleForPremium() {
-    return adminService.getEligibleForPremium();
+  // public List<User> getEligibleForPremium() {
+  // return adminService.getEligibleForPremium();
+  // }
+
+  public boolean updateUser(int id, String name, String email, String password, String role) {
+    return adminService.updateUser(id, name, email, password, role);
   }
 
-  public boolean updateUserById(int id, String name, String email, String password, String role) {
-    return adminService.updateUserById(id, name, email, password, role);
-  }
-
-  public boolean promoteToPremium(int userId, double discountPercentage) {
-    return adminService.promoteToPremium(userId, discountPercentage);
-  }
+  // public boolean promoteToPremium(int userId, double discountPercentage) {
+  // return adminService.promoteToPremium(userId, discountPercentage);
+  // }
 
   public boolean deleteUserById(int id) {
     return adminService.deleteUserById(id);
   }
 
-  public List<Task> getAllTasks() {
-    return adminService.getAllTasks();
-  }
-
   public List<String> getVehiclesAndBatteryLevels() {
     return adminService.getVehiclesAndBatteryLevels();
+  }
+
+  public List<Task> getAllTasks() {
+    return adminService.getAllTasks();
   }
 
   public List<String> getAllBasesInfo() {
@@ -59,7 +63,7 @@ public class AdminController {
     return adminService.getAllTripsInfo();
   }
 
-  public List<Usage> getAllUsageRecords() {
+  public List<Rent> getAllUsageRecords() {
     return adminService.getAllUsageRecords();
   }
 

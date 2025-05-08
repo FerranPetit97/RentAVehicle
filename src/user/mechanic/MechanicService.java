@@ -1,65 +1,53 @@
 package user.mechanic;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import notify.NotifyController;
 import notify.enums.NotifyCodeEnum;
+import user.UserController;
 import vehicle.Vehicle;
 import vehicle.VehicleController;
 
 public class MechanicService {
-  private final List<Mechanic> mechanics = new ArrayList<>();
   private final VehicleController vehicleController;
+  private final UserController userController;
   private final NotifyController notifyController;
 
-  // Constructor con inyección de dependencias
-  public MechanicService(VehicleController vehicleController, NotifyController notifyController) {
+  public MechanicService(VehicleController vehicleController, NotifyController notifyController,
+      UserController userController) {
     this.vehicleController = vehicleController;
     this.notifyController = notifyController;
-  }
-
-  public boolean createMechanic(Mechanic mechanic) {
-    return mechanics.add(mechanic);
-  }
-
-  public List<Mechanic> getAllMechanics() {
-    return mechanics;
+    this.userController = userController;
   }
 
   public Mechanic findMechanicById(int id) {
-    return mechanics.stream()
-        .filter(mechanic -> mechanic.getId() == id)
-        .findFirst()
-        .orElse(null);
-  }
-
-  public boolean deleteMechanicById(int id) {
-    return mechanics.removeIf(mechanic -> mechanic.getId() == id);
-  }
-
-  public boolean updateMechanicById(Mechanic updatedMechanic) {
-    for (int i = 0; i < mechanics.size(); i++) {
-      if (mechanics.get(i).getId() == updatedMechanic.getId()) {
-        mechanics.set(i, updatedMechanic);
-        return true;
-      }
+    Mechanic mechanic = (Mechanic) userController.findUserById(id);
+    if (mechanic == null) {
+      return null;
     }
+    return mechanic;
+  }
+
+  public boolean updateMechanicById(Mechanic mechanic) {
+    if (mechanic == null) {
+      this.notifyController.log(NotifyCodeEnum.BAD_REQUEST, "Mechanic cannot be null.");
+      return false;
+    }
+
+    this.userController.updateUser(mechanic.getId(), mechanic.getName(),
+        mechanic.getEmail(), mechanic.getPassword(), mechanic.getRole(),
+        mechanic.getVehicleId());
     return false;
   }
 
-  public boolean setVehicleToWork(Mechanic mechanic, int vehicleId) {
+  public boolean setVehicleToWorker(int mechanicId, int vehicleId) {
     Vehicle vehicle = this.vehicleController.findVehicleById(vehicleId);
+    Mechanic mechanic = findMechanicById(mechanicId);
     if (vehicle == null) {
       this.notifyController.log(NotifyCodeEnum.NOT_FOUND, "Vehicle with ID " + vehicleId + " not found.");
       return false;
     }
-    for (Mechanic m : mechanics) {
-      if (m.getId() == mechanic.getId()) {
-        m.setVehicleId(vehicle.getId());
-        return true;
-      }
-    }
-    return false;
+    this.userController.updateUser(mechanic.getId(), mechanic.getName(),
+        mechanic.getEmail(), mechanic.getPassword(), mechanic.getRole(),
+        vehicleId);
+    return true;
   }
 }

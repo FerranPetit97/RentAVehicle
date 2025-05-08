@@ -1,7 +1,8 @@
 package vehicle.base;
 
 import vehicle.Vehicle;
-import vehicle.usage.Usage;
+import vehicle.VehicleController;
+import vehicle.rental.Rent;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -13,9 +14,11 @@ import utils.DistanceCalculator;
 
 public class BaseService {
   private final List<Base> bases;
+  private final VehicleController vehicleController;
 
-  public BaseService() {
+  public BaseService(VehicleController vehicleController) {
     this.bases = new ArrayList<>();
+    this.vehicleController = vehicleController;
   }
 
   public boolean addBase(Base base) {
@@ -33,12 +36,13 @@ public class BaseService {
         .orElse(null);
   }
 
-  public boolean addVehicleToBase(int baseId, Vehicle vehicle) {
+  public boolean addVehicleToBase(int baseId, int vehicleId) {
     Base base = findBaseById(baseId);
+    Vehicle vehicle = vehicleController.findVehicleById(vehicleId);
     if (base != null) {
       return base.addVehicle(vehicle);
     }
-    return false; // Base not found or full
+    return false;
   }
 
   public boolean removeVehicleFromBase(int baseId, Vehicle vehicle) {
@@ -46,7 +50,16 @@ public class BaseService {
     if (base != null) {
       return base.removeVehicle(vehicle);
     }
-    return false; // Base not found
+    return false;
+  }
+
+  public Base findVehicleBase(int vehicleId) {
+    for (Base base : bases) {
+      if (base.getVehicles().contains(vehicleController.findVehicleById(vehicleId))) {
+        return base;
+      }
+    }
+    return null;
   }
 
   public Base findNearestBaseWithVehicles(int userX, int userY) {
@@ -54,7 +67,7 @@ public class BaseService {
     double shortestDistance = Double.MAX_VALUE;
 
     for (Base base : bases) {
-      if (!base.isBroken() && !base.getVehicles().isEmpty()) {
+      if (!base.getVehicles().isEmpty()) {
         double distance = DistanceCalculator.calculateDistance(userX, userY, base.getX(), base.getY());
         if (distance < shortestDistance) {
           shortestDistance = distance;
@@ -65,10 +78,10 @@ public class BaseService {
     return nearestBase;
   }
 
-  public Map<String, Base> getDemandStatistics(List<Usage> usageRecords) {
+  public Map<String, Base> getDemandStatistics(List<Rent> usageRecords) {
     Map<Integer, Integer> baseUsageCount = new HashMap<>();
 
-    for (Usage usage : usageRecords) {
+    for (Rent usage : usageRecords) {
       Vehicle vehicle = usage.getVehicle();
       Base base = findBaseById(vehicle.getX());
       if (base != null) {

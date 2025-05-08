@@ -12,18 +12,14 @@ public class Base {
   private List<Vehicle> vehicles;
   private int x;
   private int y;
-  private boolean isBroken;
-  private int mechanicId;
 
-  public Base(int id, String location, int capacity, int x, int y, int mechanicId) {
+  public Base(int id, String location, int capacity, int x, int y) {
     this.id = id;
     this.location = location;
     this.capacity = capacity;
     this.x = x;
     this.y = y;
     this.vehicles = new ArrayList<>();
-    this.isBroken = false;
-    this.mechanicId = mechanicId;
   }
 
   public int getId() {
@@ -50,22 +46,6 @@ public class Base {
     return y;
   }
 
-  public boolean isBroken() {
-    return isBroken;
-  }
-
-  public void setBroken(boolean broken) {
-    isBroken = broken;
-  }
-
-  public int getMechanicId() {
-    return mechanicId;
-  }
-
-  public void setMechanicId(int mechanicId) {
-    this.mechanicId = mechanicId;
-  }
-
   public boolean addVehicle(Vehicle vehicle) {
     if (vehicles.size() < capacity) {
       return vehicles.add(vehicle);
@@ -79,7 +59,7 @@ public class Base {
 
   @Override
   public String toString() {
-    return "Base{id=" + id + ", location='" + location + "', capacity=" + capacity +
+    return "{id=" + id + ", location='" + location + "', capacity=" + capacity +
         ", vehicles=" + vehicles + "}";
   }
 }

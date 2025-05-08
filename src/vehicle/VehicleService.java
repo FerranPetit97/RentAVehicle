@@ -7,39 +7,42 @@ import city.CityController;
 import notify.NotifyController;
 import notify.enums.NotifyCodeEnum;
 import task.maintenance.MaintenanceController;
-import user.User;
-import user.UserController;
 import vehicle.bicycle.Bicycle;
 import vehicle.motorbike.Motorbike;
 import vehicle.skate.Skate;
-import vehicle.usage.Usage;
-import vehicle.usage.UsageController;
 import utils.DistanceCalculator;
 
 public class VehicleService {
   private final List<Vehicle> vehicles;
   private final CityController cityController;
-  private final MaintenanceController maintenanceController;
   private final NotifyController notifyController;
-  private final UserController userController;
-  private final UsageController usageController;
 
   // Constructor con inyección de dependencias
   public VehicleService(
       CityController cityController,
       MaintenanceController maintenanceController,
-      NotifyController notifyController,
-      UserController userController,
-      UsageController usageController) {
+      NotifyController notifyController) {
     this.vehicles = new ArrayList<>();
     this.cityController = cityController;
-    this.maintenanceController = maintenanceController;
     this.notifyController = notifyController;
-    this.userController = userController;
-    this.usageController = usageController;
   }
 
-  public boolean addVehicle(Vehicle vehicle) {
+  public boolean addVehicle(int id, String type, boolean isAvailable, boolean hasNoDamage, int batteryLevel) {
+    Vehicle vehicle;
+    switch (type.toLowerCase()) {
+      case "bicycle":
+        vehicle = new Bicycle(id, isAvailable, hasNoDamage);
+        break;
+      case "motorbike":
+        vehicle = new Motorbike(id, isAvailable, hasNoDamage, batteryLevel);
+        break;
+      case "skate":
+        vehicle = new Skate(id, isAvailable, hasNoDamage, batteryLevel);
+        break;
+      default:
+        notifyController.log(NotifyCodeEnum.BAD_REQUEST, "Invalid vehicle type: " + type);
+        return false;
+    }
     return vehicles.add(vehicle);
   }
 
@@ -84,61 +87,6 @@ public class VehicleService {
       }
     }
     return false;
-  }
-
-  public boolean startTrip(int vehicleId, int userId, boolean isPremium) {
-    Vehicle vehicle = findVehicleById(vehicleId);
-    User user = userController.findUserById(userId);
-    if (user == null) {
-      this.notifyController.log(NotifyCodeEnum.NOT_FOUND, "User not found");
-      return false;
-    }
-    if (vehicle != null && vehicle.canStartTrip(isPremium)) {
-      vehicle.setUser(user);
-      vehicle.setAvailable(false);
-
-      usageController.registerUsage(vehicle, user);
-
-      return true;
-    }
-
-    System.err.println("Cannot start trip: Battery too low.");
-    return false;
-  }
-
-  public void endTrip(int vehicleId, int minutes, String dropOffLocation) {
-    Vehicle vehicle = findVehicleById(vehicleId);
-    if (vehicle != null) {
-      if (vehicle instanceof Bicycle) {
-        ((Bicycle) vehicle).consumeBattery(minutes);
-      } else if (vehicle instanceof Skate) {
-        ((Skate) vehicle).consumeBattery(minutes);
-      } else if (vehicle instanceof Motorbike) {
-        ((Motorbike) vehicle).consumeBattery(minutes);
-      }
-
-      if (vehicle.isBatteryDepleted()) {
-        System.err.println("Battery depleted! Applying penalty.");
-      }
-
-      if (vehicle.getBatteryLevel() < 20) {
-        maintenanceController.addTask(new task.maintenance.Maintenance(
-            vehicle.getId(),
-            "Recharge battery",
-            vehicle,
-            "current location",
-            dropOffLocation));
-      }
-
-      vehicle.setAvailable(true);
-
-      for (Usage usage : usageController.getUsagesByVehicle(vehicle)) {
-        if (usage.getEndTime() == null) {
-          usageController.endUsage(usage.getId());
-          break;
-        }
-      }
-    }
   }
 
   public Vehicle findNearestVehicle(String vehicleType, int userX, int userY) {

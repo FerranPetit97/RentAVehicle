@@ -4,12 +4,26 @@ import user.User;
 
 public class Client extends User {
 
-  public Client(int id, String name, String email, String password) {
-    super(id, name, email, password, "client");
+  private double balance;
+
+  public Client(int id, String name, String email, String password, double balance) {
+    super(id, name, email, password, "standard");
+    this.balance = balance;
   }
 
-  @Override
+  public double getBalance() {
+    return balance;
+  }
+
+  public void setBalance(double balance) {
+    this.balance = balance;
+  }
+
+  public boolean hasPositiveBalance() {
+    return getBalance() > 0;
+  }
+
   public String toString() {
-      return super.toString();
+    return super.toString() + ", balance=" + balance + '}';
   }
 }

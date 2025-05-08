@@ -7,10 +7,8 @@ public class Mechanic extends User {
   private int baseId;
   private int vehicleId;
 
-  public Mechanic(int id, String name, String email, String password, int baseId, int vehicleId) {
+  public Mechanic(int id, String name, String email, String password) {
     super(id, name, email, password, "mechanic");
-    this.baseId = baseId;
-    this.vehicleId = vehicleId;
   }
 
   public int getBaseId() {
@@ -29,8 +27,7 @@ public class Mechanic extends User {
     this.vehicleId = vehicleId;
   }
 
-  @Override
   public String toString() {
-    return "Mechanic{" + super.toString() + "}";
+    return super.toString() + '}';
   }
 }

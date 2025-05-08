@@ -18,8 +18,7 @@ public class Manager extends User {
     this.vehicleId = vehicleId;
   }
 
-  @Override
   public String toString() {
-      return super.toString(); // Llama al método toString() de User
+    return super.toString() + '}';
   }
 }

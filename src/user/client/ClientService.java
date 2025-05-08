@@ -3,22 +3,32 @@ package user.client;
 import java.util.ArrayList;
 import java.util.List;
 
+import user.UserController;
+
 public class ClientService {
   private final List<Client> clients = new ArrayList<>();
 
-  public boolean createClient(Client client) {
-    return clients.add(client);
+  private final UserController userController;
+
+  public ClientService(UserController userController) {
+    this.userController = userController;
   }
 
   public List<Client> getAllClients() {
+    clients.clear();
+    userController.getAllUsers().forEach(user -> {
+      if (user instanceof Client) {
+        clients.add((Client) user);
+      }
+    });
     return clients;
   }
 
-  public Client findClientByEmail(String email) {
-    return clients.stream()
-        .filter(client -> client.getEmail().equalsIgnoreCase(email))
+  public Client findClientById(int id) {
+    return getAllClients().stream()
+        .filter(client -> client.getId() == id)
         .findFirst()
-        .orElse(null);
+        .orElseThrow(() -> new IllegalArgumentException("Client with ID " + id + " not found."));
   }
 
   public boolean updateClient(Client client) {

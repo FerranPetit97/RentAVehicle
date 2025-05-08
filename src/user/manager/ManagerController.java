@@ -9,11 +9,6 @@ public class ManagerController {
     this.managerService = managerService;
   }
 
-  public boolean createManager(Manager user) {
-    return managerService.addManager(user);
-  }
-
-  
   public boolean setVehicleToWork(Manager manager, int vehicleId) {
     return managerService.setVehicleToWork(manager, vehicleId);
   }

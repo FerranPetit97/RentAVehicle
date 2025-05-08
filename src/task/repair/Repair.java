@@ -21,9 +21,4 @@ public class Repair extends Task {
   public Base getBase() {
     return base;
   }
-
-  @Override
-  public String toString() {
-    return "Repair{" + super.toString() + ", vehicle=" + vehicle + ", base=" + base + "}";
-  }
 }

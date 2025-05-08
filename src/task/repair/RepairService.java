@@ -26,6 +26,6 @@ public class RepairService {
         return true;
       }
     }
-    return false; // Task not found
+    return false;
   }
 }
