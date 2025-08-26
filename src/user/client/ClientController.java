@@ -17,4 +17,8 @@ public class ClientController {
     return clientService.findClientById(id);
   }
 
+  public boolean upgradeClientToPremium(int clientId) {
+    return clientService.upgradeClientToPremium(clientId);
+  }
+
 }

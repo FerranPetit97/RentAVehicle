@@ -4,8 +4,8 @@ import vehicle.Vehicle;
 
 public class Skate extends Vehicle {
 
-  public Skate(int id, boolean isAvailable, boolean hasNoDamage, int batteryLevel) {
-    super(id, "skate", isAvailable, hasNoDamage, batteryLevel);
+  public Skate(int id) {
+    super(id, "skate", true, true, 100);
   }
   
   public void consumeBattery(int minutes) {
@@ -14,6 +14,6 @@ public class Skate extends Vehicle {
 
   @Override
   public String toString() {
-    return "Skate{" + super.toString() + "}";
+    return "Skate" + super.toString() + "}";
   }
 }

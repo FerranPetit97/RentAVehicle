@@ -12,12 +12,12 @@ public class RentController {
     this.rentService = rentService;
   }
 
-  public boolean registerRent(int clientId, int vehicleId, int baseId) {
-    return rentService.registerRent(clientId, vehicleId, baseId);
+  public boolean registerRent(int clientId, int vehicleId, int baseId, int duration) {
+    return rentService.startRent(clientId, vehicleId, baseId, duration);
   }
 
-  public boolean endRent(int rentId) {
-    return rentService.endRent(rentId);
+  public boolean endRent(int rentId, int baseId) {
+    return rentService.endRent(rentId, baseId);
   }
 
   public List<Rent> getAllRents() {

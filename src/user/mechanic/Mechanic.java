@@ -28,6 +28,6 @@ public class Mechanic extends User {
   }
 
   public String toString() {
-    return super.toString() + '}';
+    return "Mechanic" + super.toString() + '}';
   }
 }

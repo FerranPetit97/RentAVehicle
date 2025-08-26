@@ -17,6 +17,8 @@ public class VehicleService {
   private final CityController cityController;
   private final NotifyController notifyController;
 
+  private int nextId = 1;
+
   // Constructor con inyección de dependencias
   public VehicleService(
       CityController cityController,
@@ -27,17 +29,17 @@ public class VehicleService {
     this.notifyController = notifyController;
   }
 
-  public boolean addVehicle(int id, String type, boolean isAvailable, boolean hasNoDamage, int batteryLevel) {
+  public boolean addVehicle(String type) {
     Vehicle vehicle;
     switch (type.toLowerCase()) {
       case "bicycle":
-        vehicle = new Bicycle(id, isAvailable, hasNoDamage);
+        vehicle = new Bicycle(nextId++);
         break;
       case "motorbike":
-        vehicle = new Motorbike(id, isAvailable, hasNoDamage, batteryLevel);
+        vehicle = new Motorbike(nextId++);
         break;
       case "skate":
-        vehicle = new Skate(id, isAvailable, hasNoDamage, batteryLevel);
+        vehicle = new Skate(nextId++);
         break;
       default:
         notifyController.log(NotifyCodeEnum.BAD_REQUEST, "Invalid vehicle type: " + type);
@@ -104,6 +106,19 @@ public class VehicleService {
     }
 
     return nearestVehicle;
+  }
+
+  public int calculateBatteryAfterHours(Vehicle vehicle, int hours) {
+    if (vehicle.getBatteryLevel() == 0) {
+      System.err.println("El vehículo no tiene batería (por ejemplo, bicicletas).");
+      return -1;
+    }
+
+    int currentBattery = vehicle.getBatteryLevel();
+    int batteryAfterHours = currentBattery - (hours * 10);
+
+    // Asegurarse de que la batería no sea menor que 0
+    return Math.max(batteryAfterHours, 0);
   }
 
   public List<String> getVehiclesAndBatteryLevels() {

@@ -1,55 +1,25 @@
 package user.manager;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import notify.NotifyController;
 import notify.enums.NotifyCodeEnum;
-import vehicle.Vehicle;
-import vehicle.VehicleController;
+import user.UserController;
 
 public class ManagerService {
-  private final List<Manager> managers = new ArrayList<>();
-  private final VehicleController vehicleController;
+  private final UserController userController;
   private final NotifyController notifyController;
 
-  // Constructor con inyección de dependencias
-  public ManagerService(VehicleController vehicleController, NotifyController notifyController) {
-    this.vehicleController = vehicleController;
+  public ManagerService(NotifyController notifyController,
+      UserController userController) {
     this.notifyController = notifyController;
+    this.userController = userController;
   }
 
-  public boolean addManager(Manager manager) {
-    return managers.add(manager);
-  }
-
-  public List<Manager> getAllManagers() {
-    return managers;
-  }
-
-  public Manager findManagerByEmail(String email) {
-    return managers.stream()
-        .filter(manager -> manager.getEmail().equalsIgnoreCase(email))
-        .findFirst()
-        .orElse(null);
-  }
-
-  public boolean deleteManagerByEmail(String email) {
-    return managers.removeIf(manager -> manager.getEmail().equalsIgnoreCase(email));
-  }
-
-  public boolean setVehicleToWork(Manager manager, int vehicleId) {
-    Vehicle vehicle = this.vehicleController.findVehicleById(vehicleId);
-    if (vehicle == null) {
-      this.notifyController.log(NotifyCodeEnum.NOT_FOUND, "Vehicle with ID " + vehicleId + " not found.");
-      return false;
+  public Manager findManagerById(int id) {
+    Manager manager = (Manager) userController.findUserById(id);
+    if (manager == null) {
+      notifyController.log(NotifyCodeEnum.NOT_FOUND, "Mechanic with ID " + id + " not found.");
     }
-    for (Manager m : managers) {
-      if (m.getId() == manager.getId()) {
-        m.setVehicleId(vehicle.getId());
-        return true;
-      }
-    }
-    return false;
+    return manager;
   }
+
 }

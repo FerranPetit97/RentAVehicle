@@ -2,23 +2,37 @@ package task.repair;
 
 import task.Task;
 import vehicle.Vehicle;
-import vehicle.base.Base;
 
 public class Repair extends Task {
   private Vehicle vehicle;
-  private Base base;
+  private String pickupLocation;
+  private String dropOffLocation;
 
-  public Repair(int id, String description, Vehicle vehicle, Base base) {
+  public Repair(int id, String description, Vehicle vehicle, String pickupLocation, String dropOffLocation) {
     super(id, description);
     this.vehicle = vehicle;
-    this.base = base;
+    this.pickupLocation = pickupLocation;
+    this.dropOffLocation = dropOffLocation;
   }
 
   public Vehicle getVehicle() {
     return vehicle;
   }
 
-  public Base getBase() {
-    return base;
+  public String getPickupLocation() {
+    return pickupLocation;
+  }
+
+  public String getDropOffLocation() {
+    return dropOffLocation;
+  }
+
+  @Override
+  public String toString() {
+    return "Repair{" + super.toString() +
+        ", vehicle=" + vehicle +
+        ", pickupLocation='" + pickupLocation + '\'' +
+        ", dropOffLocation='" + dropOffLocation + '\'' +
+        '}';
   }
 }

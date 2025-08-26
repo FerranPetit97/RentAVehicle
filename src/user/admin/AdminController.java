@@ -15,18 +15,6 @@ public class AdminController {
     this.adminService = adminService;
   }
 
-  public boolean createClient(int id, String name, String email, String password, double balance) {
-    return adminService.createClient(id, name, email, password, balance);
-  }
-
-  public boolean createMechanic(int id, String name, String email, String password) {
-    return adminService.createMechanic(id, name, email, password);
-  }
-
-  public boolean createManager(int id, String name, String email, String password) {
-    return adminService.createManager(id, name, email, password);
-  }
-
   public List<User> getAllUsers() {
     return adminService.getAllUsers();
   }
@@ -77,10 +65,6 @@ public class AdminController {
 
   public List<Vehicle> getVehiclesInUseDuring(LocalDateTime start, LocalDateTime end) {
     return adminService.getVehiclesInUseDuring(start, end);
-  }
-
-  public boolean addVehicle(int id, String type, boolean isAvailable, boolean hasNoDamage, int batteryLevel) {
-    return adminService.addVehicle(id, type, isAvailable, hasNoDamage, batteryLevel);
   }
 
   public boolean updateVehicle(int id, boolean isAvailable, boolean hasNoDamage, int batteryLevel) {

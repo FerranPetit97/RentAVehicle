@@ -2,10 +2,6 @@ package user;
 
 import java.util.List;
 
-import user.client.Client;
-import user.manager.Manager;
-import user.mechanic.Mechanic;
-
 public class UserController {
   private final UserService userService;
 
@@ -13,16 +9,8 @@ public class UserController {
     this.userService = userService;
   }
 
-  public boolean createClient(Client user) {
-    return userService.createClient(user);
-  }
-
-  public boolean createMechanic(Mechanic user) {
-    return userService.createMechanic(user);
-  }
-
-  public boolean createManager(Manager user) {
-    return userService.createManager(user);
+  public boolean createUser(User user) {
+    return userService.createUser(user);
   }
 
   public List<User> getAllUsers() {

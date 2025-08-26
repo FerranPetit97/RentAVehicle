@@ -5,8 +5,6 @@ import java.util.List;
 
 import notify.NotifyController;
 import notify.enums.NotifyCodeEnum;
-import user.client.Client;
-import user.manager.Manager;
 import user.mechanic.Mechanic;
 
 public class UserService {
@@ -14,44 +12,39 @@ public class UserService {
 
   private final NotifyController notifyController;
 
+  private int nextId = 1;
+
   public UserService(NotifyController notifyController) {
     this.notifyController = notifyController;
   }
 
-  public boolean createClient(Client user) {
+  public boolean createUser(User user) {
     if (user == null) {
-      notifyController.log(NotifyCodeEnum.BAD_REQUEST, "Client cannot be null.");
+      notifyController.log(NotifyCodeEnum.BAD_REQUEST, "User cannot be null.");
       return false;
     }
-    users.add(user);
-    return true;
-  }
 
-  public boolean createMechanic(Mechanic user) {
-    if (user == null) {
-      notifyController.log(NotifyCodeEnum.BAD_REQUEST, "Mechanic cannot be null.");
-      return false;
-    }
-    users.add(user);
-    return true;
-  }
+    user.setId(nextId++);
 
-  public boolean createManager(Manager user) {
-    if (user == null) {
-      notifyController.log(NotifyCodeEnum.BAD_REQUEST, "Manager cannot be null.");
+    if (isUserDuplicate(user.getId(), user.getEmail())) {
+      notifyController.log(NotifyCodeEnum.BAD_REQUEST, "User with the same ID or email already exists.");
       return false;
     }
+
     users.add(user);
     return true;
   }
 
   public List<User> getAllUsers() {
+    if (users.isEmpty()) {
+      notifyController.log(NotifyCodeEnum.NOT_FOUND, "No users found in the system.");
+    }
     return users;
   }
 
   public User findUserById(int id) {
     return getAllUsers().stream()
-        .filter(user -> user.getId() == id)
+        .filter(u -> u.getId() == id)
         .findFirst()
         .orElse(null);
   }
@@ -83,6 +76,10 @@ public class UserService {
     }
     users.remove(user);
     return true;
+  }
+
+  private boolean isUserDuplicate(int id, String email) {
+    return users.stream().anyMatch(user -> user.getId() == id || user.getEmail().equalsIgnoreCase(email));
   }
 
   // public boolean promoteToPremium(int clientId, double discountPercentage) {

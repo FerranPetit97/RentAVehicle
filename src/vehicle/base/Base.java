@@ -59,7 +59,7 @@ public class Base {
 
   @Override
   public String toString() {
-    return "{id=" + id + ", location='" + location + "', capacity=" + capacity +
+    return "Base{id=" + id + ", location='" + location + "', capacity=" + capacity +
         ", vehicles=" + vehicles + "}";
   }
 }

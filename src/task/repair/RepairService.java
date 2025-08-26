@@ -1,31 +1,27 @@
 package task.repair;
 
-import java.util.ArrayList;
-import java.util.List;
+import task.TaskController;
+import vehicle.Vehicle;
+import vehicle.VehicleController;
 
 public class RepairService {
-  private final List<Repair> repairTasks;
+  private final TaskController taskController;
+  private final VehicleController vehicleController;
 
-  public RepairService() {
-    this.repairTasks = new ArrayList<>();
+  public RepairService(TaskController taskController, VehicleController vehicleController) {
+    this.taskController = taskController;
+    this.vehicleController = vehicleController;
   }
 
-  public boolean addRepairTask(Repair task) {
-    return repairTasks.add(task);
-  }
-
-  public List<Repair> getAllRepairTasks() {
-    return repairTasks;
+  public boolean addRepairTask(String description, int vehicleId, String pickupLocation,
+      String dropOffLocation) {
+    Vehicle vehicle = vehicleController.findVehicleById(vehicleId);
+    Repair repair = new Repair(0, description, vehicle, pickupLocation, dropOffLocation);
+    return taskController.createRepairTask(repair);
   }
 
   public boolean completeRepairTask(int taskId, double repairCost) {
-    for (Repair task : repairTasks) {
-      if (task.getId() == taskId) {
-        task.setCost(repairCost);
-        task.completeTask();
-        return true;
-      }
-    }
-    return false;
+    taskController.findTaskById(taskId).setCost(repairCost);
+    return true;
   }
 }

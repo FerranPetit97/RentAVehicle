@@ -4,8 +4,8 @@ import vehicle.Vehicle;
 
 public class Motorbike extends Vehicle {
 
-  public Motorbike(int id, boolean isAvailable, boolean hasNoDamage, int batteryLevel) {
-    super(id, "motorbike", isAvailable, hasNoDamage, batteryLevel);
+  public Motorbike(int id) {
+    super(id, "motorbike", true, true, 100);
   }
 
   public void consumeBattery(int minutes) {
@@ -14,6 +14,6 @@ public class Motorbike extends Vehicle {
 
   @Override
   public String toString() {
-    return "Motorbike{" + super.toString() + "}";
+    return "Motorbike" + super.toString() + "}";
   }
 }

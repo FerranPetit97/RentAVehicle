@@ -10,10 +10,6 @@ public class MaintenanceService {
     this.tasks = new ArrayList<>();
   }
 
-  public boolean addTask(Maintenance task) {
-    return tasks.add(task);
-  }
-
   public List<Maintenance> getAllTasks() {
     return tasks;
   }

@@ -16,13 +16,13 @@ public class Rent {
     private LocalDateTime endTime;
     private double cost;
 
-    public Rent(int id, Vehicle vehicle, User user, LocalDateTime startTime, Base startBase) {
+    public Rent(int id, Vehicle vehicle, User user, LocalDateTime startTime, LocalDateTime endTime, Base startBase) {
         this.id = id;
         this.vehicle = vehicle;
         this.user = user;
         this.startBase = startBase;
-        this.startTime = LocalDateTime.now();
-        this.endTime = null;
+        this.endTime = endTime;
+        this.startTime = startTime;
         this.cost = 0.0;
     }
 
@@ -42,16 +42,16 @@ public class Rent {
         return startTime;
     }
 
-    public LocalDateTime getEndTime() {
-        return endTime;
-    }
-
     public double getCost() {
         return cost;
     }
 
     public void setCost(double cost) {
         this.cost = cost;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
     }
 
     public void setEndTime(LocalDateTime endTime) {
@@ -67,7 +67,7 @@ public class Rent {
 
     @Override
     public String toString() {
-        return "{id=" + id + ", vehicle=" + vehicle + ", user=" + user +
+        return "Rent{id=" + id + ", vehicle=" + vehicle + ", user=" + user +
                 ", startTime=" + startTime + ", endTime=" + endTime + ", cost=" + cost + "}";
     }
 }

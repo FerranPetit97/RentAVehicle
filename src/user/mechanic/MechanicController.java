@@ -1,6 +1,5 @@
 package user.mechanic;
 
-
 public class MechanicController {
   private final MechanicService mechanicService;
 
@@ -9,7 +8,6 @@ public class MechanicController {
   }
 
   public boolean setVehicleToWork(int mechanicId, int vehicleId) {
-
     return mechanicService.setVehicleToWorker(mechanicId, vehicleId);
   }
 }

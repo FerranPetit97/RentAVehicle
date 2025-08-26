@@ -13,11 +13,8 @@ import tariff.Tariff;
 import tariff.TariffController;
 import user.User;
 import user.UserController;
-import user.client.Client;
 import user.client.ClientController;
-import user.manager.Manager;
 import user.manager.ManagerController;
-import user.mechanic.Mechanic;
 import user.mechanic.MechanicController;
 import vehicle.Vehicle;
 import vehicle.VehicleController;
@@ -34,9 +31,8 @@ public class AdminService {
     private final NotifyController notifyController;
     private final BaseController baseController;
     private final MechanicController mechanicController;
-    private final ManagerController managerController;
     private final TariffController tariffController;
-    private final RentController usageController;
+    private final RentController rentController;
 
     // Constructor con inyección de dependencias
     public AdminService(
@@ -48,7 +44,7 @@ public class AdminService {
             MechanicController mechanicController,
             ManagerController managerController,
             TariffController tariffController,
-            RentController usageController,
+            RentController rentController,
             ClientController clientController) {
         this.userController = userController;
         this.vehicleController = vehicleController;
@@ -56,9 +52,8 @@ public class AdminService {
         this.notifyController = notifyController;
         this.baseController = baseController;
         this.mechanicController = mechanicController;
-        this.managerController = managerController;
         this.tariffController = tariffController;
-        this.usageController = usageController;
+        this.rentController = rentController;
     }
 
     // public List<User> getEligibleForPremium() {
@@ -76,20 +71,6 @@ public class AdminService {
                 .orElse(null);
     }
 
-    public boolean createClient(int id, String name, String email, String password, double balance) {
-        Client client = new Client(id, name, email, password, balance);
-        return userController.createClient(client);
-    }
-
-    public boolean createMechanic(int id, String name, String email, String password) {
-        Mechanic mechanic = new Mechanic(id, name, email, password);
-        return userController.createMechanic(mechanic);
-    }
-
-    public boolean createManager(int id, String name, String email, String password) {
-        Manager manager = new Manager(id, name, email, password);
-        return userController.createManager(manager);
-    }
 
     public List<User> getAllUsers() {
         return userController.getAllUsers();
@@ -106,10 +87,6 @@ public class AdminService {
             this.notifyController.log(NotifyCodeEnum.UNAUTHORIZED, "Permission denied: " + e.getMessage());
             return false;
         }
-    }
-
-    public boolean addVehicle(int id, String type, boolean isAvailable, boolean hasNoDamage, int batteryLevel) {
-        return vehicleController.addVehicle(id, type, isAvailable, hasNoDamage, batteryLevel);
     }
 
     public List<String> getVehiclesAndBatteryLevels() {
@@ -159,10 +136,6 @@ public class AdminService {
         return baseInfoList;
     }
 
-    public boolean setVehicleToManager(Manager manager, int vehicleId) {
-        return managerController.setVehicleToWork(manager, vehicleId);
-    }
-
     public List<String> getAllTripsInfo() {
         List<String> vehicleInfoList = new ArrayList<>();
         List<Vehicle> vehicles = vehicleController.getAllVehicles();
@@ -190,7 +163,7 @@ public class AdminService {
     }
 
     public List<Rent> getAllUsageRecords() {
-        return usageController.getAllRents();
+        return rentController.getAllRents();
     }
 
     public boolean assignVehicleToMechanic(int vehicleId, int mechanicId) {
@@ -224,7 +197,7 @@ public class AdminService {
     }
 
     public List<Vehicle> getVehiclesInUseDuring(LocalDateTime start, LocalDateTime end) {
-        return usageController.getVehiclesInUseDuring(start, end);
+        return rentController.getVehiclesInUseDuring(start, end);
     }
 
     public Map<String, Base> getDemandStatistics(List<Rent> usageRecords) {

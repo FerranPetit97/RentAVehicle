@@ -13,9 +13,8 @@ public class BaseController {
     this.baseService = baseService;
   }
 
-  public boolean addBase(int id, String location, int capacity, int x, int y) {
-    Base base = new Base(id, location, capacity, x, y);
-    return baseService.addBase(base);
+  public boolean addBase(String location, int capacity, int x, int y) {
+    return baseService.addBase(location, capacity, x, y);
   }
 
   public List<Base> getAllBases() {

@@ -7,13 +7,13 @@ public abstract class Vehicle {
   private String type;
   private boolean isAvailable;
   private boolean hasNoDamage;
-  private int batteryLevel;
+  private Integer batteryLevel;
   private int x;
   private int y;
   private boolean isBroken;
   private User user;
 
-  public Vehicle(int id, String type, boolean isAvailable, boolean hasNoDamage, int batteryLevel) {
+  public Vehicle(int id, String type, boolean isAvailable, boolean hasNoDamage, Integer batteryLevel) {
     this.id = id;
     this.type = type;
     this.isAvailable = isAvailable;
@@ -97,6 +97,9 @@ public abstract class Vehicle {
   }
 
   public boolean canStartTrip(boolean isPremium) {
+    if (batteryLevel == null) {
+      return true;
+    }
     if (isPremium) {
       return batteryLevel > 10;
     }
@@ -114,7 +117,15 @@ public abstract class Vehicle {
 
   @Override
   public String toString() {
-    return "Vehicle{id=" + id + ", type='" + type + "', isAvailable=" + isAvailable +
-        ", hasNoDamage=" + hasNoDamage + ", batteryLevel=" + batteryLevel + "}";
+    StringBuilder sb = new StringBuilder();
+    sb.append("{id=").append(id)
+        .append(", isAvailable=").append(isAvailable)
+        .append(", hasNoDamage=").append(hasNoDamage);
+
+    // Solo incluir batteryLevel si no es null
+    if (batteryLevel != null) {
+      sb.append(", batteryLevel=").append(batteryLevel);
+    }
+    return sb.toString();
   }
 }

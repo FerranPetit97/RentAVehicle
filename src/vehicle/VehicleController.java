@@ -9,8 +9,8 @@ public class VehicleController {
     this.vehicleService = vehicleService;
   }
 
-  public boolean addVehicle(int id, String type, boolean isAvailable, boolean hasNoDamage, int batteryLevel) {
-    return vehicleService.addVehicle(id, type, isAvailable, hasNoDamage, batteryLevel);
+  public boolean addVehicle(String type) {
+    return vehicleService.addVehicle(type);
   }
 
   public List<Vehicle> getAllVehicles() {
@@ -35,6 +35,10 @@ public class VehicleController {
 
   public Vehicle findNearestVehicle(String vehicleType, int userX, int userY) {
     return vehicleService.findNearestVehicle(vehicleType, userX, userY);
+  }
+
+  public int calculateBatteryAfterHours(Vehicle vehicle, int hours) {
+    return vehicleService.calculateBatteryAfterHours(vehicle, hours);
   }
 
   public List<String> getVehiclesAndBatteryLevels() {

@@ -21,21 +21,9 @@ public class MechanicService {
   public Mechanic findMechanicById(int id) {
     Mechanic mechanic = (Mechanic) userController.findUserById(id);
     if (mechanic == null) {
-      return null;
+      notifyController.log(NotifyCodeEnum.NOT_FOUND, "Mechanic with ID " + id + " not found.");
     }
     return mechanic;
-  }
-
-  public boolean updateMechanicById(Mechanic mechanic) {
-    if (mechanic == null) {
-      this.notifyController.log(NotifyCodeEnum.BAD_REQUEST, "Mechanic cannot be null.");
-      return false;
-    }
-
-    this.userController.updateUser(mechanic.getId(), mechanic.getName(),
-        mechanic.getEmail(), mechanic.getPassword(), mechanic.getRole(),
-        mechanic.getVehicleId());
-    return false;
   }
 
   public boolean setVehicleToWorker(int mechanicId, int vehicleId) {
@@ -45,9 +33,14 @@ public class MechanicService {
       this.notifyController.log(NotifyCodeEnum.NOT_FOUND, "Vehicle with ID " + vehicleId + " not found.");
       return false;
     }
-    this.userController.updateUser(mechanic.getId(), mechanic.getName(),
-        mechanic.getEmail(), mechanic.getPassword(), mechanic.getRole(),
+    this.userController.updateUser(
+        mechanic.getId(),
+        mechanic.getName(),
+        mechanic.getEmail(),
+        mechanic.getPassword(),
+        mechanic.getRole(),
         vehicleId);
     return true;
   }
+
 }

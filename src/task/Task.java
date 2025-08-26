@@ -17,6 +17,10 @@ public abstract class Task {
     return id;
   }
 
+  public void setId(int id) {
+    this.id = id;
+  }
+
   public String getDescription() {
     return description;
   }
@@ -39,6 +43,6 @@ public abstract class Task {
 
   @Override
   public String toString() {
-    return "Task{id=" + id + ", description='" + description + "', isCompleted=" + isCompleted + ", cost=" + cost + "}";
+    return "id=" + id + ", description='" + description + "', isCompleted=" + isCompleted + ", cost=" + cost;
   }
 }

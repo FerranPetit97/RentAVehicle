@@ -16,12 +16,15 @@ public class BaseService {
   private final List<Base> bases;
   private final VehicleController vehicleController;
 
+  private int nextId = 1;
+
   public BaseService(VehicleController vehicleController) {
     this.bases = new ArrayList<>();
     this.vehicleController = vehicleController;
   }
 
-  public boolean addBase(Base base) {
+  public boolean addBase(String location, int capacity, int x, int y) {
+    Base base = new Base(nextId++, location, capacity, x, y);
     return bases.add(base);
   }
 
@@ -39,6 +42,11 @@ public class BaseService {
   public boolean addVehicleToBase(int baseId, int vehicleId) {
     Base base = findBaseById(baseId);
     Vehicle vehicle = vehicleController.findVehicleById(vehicleId);
+
+    if (vehicle.getType().equalsIgnoreCase("motorbike")) {
+      System.out.println("No se puede agregar una motocicleta.");
+      return false;
+    }
     if (base != null) {
       return base.addVehicle(vehicle);
     }

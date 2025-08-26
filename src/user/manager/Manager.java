@@ -19,6 +19,6 @@ public class Manager extends User {
   }
 
   public String toString() {
-    return super.toString() + '}';
+    return "Manager" + super.toString() + '}';
   }
 }

@@ -31,7 +31,7 @@ public class RentService {
         this.tariffController = tariffController;
     }
 
-    public boolean registerRent(int clientId, int vehicleId, int baseId) {
+    public boolean startRent(int clientId, int vehicleId, int baseId, int duration) {
         Client client = clientController.findClientById(clientId);
         Vehicle vehicle = vehicleController.findVehicleById(vehicleId);
         Base startBase = baseController.findBaseById(baseId);
@@ -44,25 +44,72 @@ public class RentService {
         if (!startBase.removeVehicle(vehicle)) {
             throw new IllegalArgumentException("El vehículo no se pudo retirar de la base.");
         }
-        Rent rental = new Rent(nextId++, vehicle, client, LocalDateTime.now(), startBase);
+        if (!userHaveBalance(client, vehicle, LocalDateTime.now(), LocalDateTime.now().plusHours(duration))) {
+            throw new IllegalArgumentException("El usuario no tiene saldo suficiente para el alquiler.");
+        }
+        vehicle.setAvailable(false);
+        Rent rental = new Rent(nextId++, vehicle, client, LocalDateTime.now(), LocalDateTime.now().plusHours(duration),
+                startBase);
         rentRecords.add(rental);
         return true;
     }
 
-    public boolean endRent(int rentId) {
-        for (Rent rent : rentRecords) {
-            if (rent.getId() == rentId && rent.getEndTime() == null) {
-                rent.setEndTime(LocalDateTime.now().plusHours(2));
-                rent.setCost(tariffController.getTariff(rent.getVehicle().getType())
-                        .calculateCost(calculateHoursRented(rent), false));
-                return true;
-            }
+    public boolean endRent(int rentId, int baseId) {
+        Rent rent = rentRecords.stream()
+                .filter(r -> r.getId() == rentId)
+                .findFirst()
+                .orElse(null);
+
+        if (rent == null) {
+            throw new IllegalArgumentException("El alquiler con ID " + rentId + " no existe.");
         }
-        return false;
+
+        Vehicle vehicle = rent.getVehicle();
+        Client client = (Client) rent.getUser();
+        Base endBase = baseController.findBaseById(baseId);
+
+        if (endBase == null) {
+            throw new IllegalArgumentException("La base con ID " + baseId + " no existe.");
+        }
+
+        // Calcular el coste del viaje
+        int hoursRented = calculateHoursRented(rent.getStartTime(), rent.getEndTime());
+        double cost = tariffController.getTariff(vehicle.getType())
+                .calculateCost(hoursRented, client.isPremium());
+        rent.setCost(cost);
+
+        client.setBalance(client.getBalance() - cost);
+
+        // Restaurar el vehículo
+        vehicle.setAvailable(true);
+        vehicle.setX(endBase.getX());
+        vehicle.setY(endBase.getY());
+
+        vehicle.setBatteryLevel(vehicleController.calculateBatteryAfterHours(vehicle, hoursRented));
+
+        // Añadir el vehículo a la base
+        if (!endBase.addVehicle(vehicle)) {
+            throw new IllegalArgumentException("No se pudo añadir el vehículo a la base " + endBase.getLocation());
+        }
+
+        return true;
     }
 
     public List<Rent> getAllRents() {
         return rentRecords;
+    }
+
+    private int calculateHoursRented(LocalDateTime startTime, LocalDateTime endTime) {
+        return (int) (java.time.Duration.between(startTime, endTime)).toHours();
+    }
+
+    private boolean userHaveBalance(Client client, Vehicle vehicle, LocalDateTime startTime, LocalDateTime endTime) {
+        double cost = tariffController.getTariff(vehicle.getType())
+                .calculateCost(calculateHoursRented(startTime, endTime), client.isPremium());
+        if (client.getBalance() < cost) {
+            return false;
+        }
+        return true;
     }
 
     public List<Vehicle> getVehiclesInUseDuring(LocalDateTime start, LocalDateTime end) {
@@ -73,9 +120,5 @@ public class RentService {
             }
         }
         return vehiclesInUse;
-    }
-
-    private int calculateHoursRented(Rent rent) {
-        return (int) (java.time.Duration.between(rent.getStartTime(), rent.getEndTime()).toHours());
     }
 }

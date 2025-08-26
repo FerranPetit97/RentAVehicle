@@ -9,11 +9,6 @@ public class SkateController {
     this.skateService = new SkateService();
   }
 
-  public boolean addSkate(int id, boolean isAvailable, boolean hasNoDamage, int batteryLevel) {
-    Skate skate = new Skate(id, isAvailable, hasNoDamage, batteryLevel);
-    return skateService.addSkate(skate);
-  }
-
   public List<Skate> getAllSkates() {
     return skateService.getAllSkates();
   }
