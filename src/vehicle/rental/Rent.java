@@ -11,7 +11,6 @@ public class Rent {
     private Vehicle vehicle;
     private User user;
     private Base startBase;
-    private Base endBase;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private double cost;

@@ -17,7 +17,7 @@ public class VehicleService {
   private final CityController cityController;
   private final NotifyController notifyController;
 
-  private int nextId = 1;
+  private int nextId = 0;
 
   // Constructor con inyección de dependencias
   public VehicleService(

@@ -22,8 +22,9 @@ public class TaskController {
     return taskService.addTask(maintenance);
   }
 
-  public boolean createRepairTask(Repair repair) {
-    return taskService.addTask(repair);
+  public boolean createRepairTask(String name, int vehicleId, String pickupLocation, String dropOffLocation) {
+    Task task = new Repair(0, name, null, pickupLocation, dropOffLocation);
+    return taskService.addTask(task);
   }
 
   public List<Task> getAllTasks() {

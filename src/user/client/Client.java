@@ -34,6 +34,6 @@ public class Client extends User {
   }
 
   public String toString() {
-    return "Client" + super.toString() + ", balance=" + balance + '}';
+    return "Client" + super.toString() + ", balance=" + balance +  ", isPremium=" + isPremium +'}';
   }
 }

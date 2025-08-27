@@ -30,6 +30,6 @@ public class BicycleService {
     if (bicycle != null) {
       return bicycles.remove(bicycle);
     }
-    return false; // Bicycle not found
+    return false;
   }
 }

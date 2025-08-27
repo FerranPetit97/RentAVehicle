@@ -34,6 +34,10 @@ public class Base {
     return capacity;
   }
 
+  public void setCapacity(int capacity) {
+    this.capacity = capacity;
+  }
+
   public List<Vehicle> getVehicles() {
     return vehicles;
   }

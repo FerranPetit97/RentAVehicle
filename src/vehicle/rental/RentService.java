@@ -7,7 +7,7 @@ import java.util.List;
 import tariff.TariffController;
 
 import user.client.Client;
-import user.client.ClientController;
+import user.client.ClientService;
 
 import vehicle.Vehicle;
 import vehicle.VehicleController;
@@ -18,23 +18,24 @@ public class RentService {
     private final List<Rent> rentRecords = new ArrayList<>();
     private int nextId = 1;
 
-    private final ClientController clientController;
+    private final ClientService clientService; // antes ClientController
     private final VehicleController vehicleController;
     private final BaseController baseController;
     private final TariffController tariffController;
 
-    public RentService(ClientController clientController, VehicleController vehicleController,
+    public RentService(ClientService clientService, VehicleController vehicleController,
             BaseController baseController, TariffController tariffController) {
-        this.clientController = clientController;
+        this.clientService = clientService;
         this.vehicleController = vehicleController;
         this.baseController = baseController;
         this.tariffController = tariffController;
     }
 
     public boolean startRent(int clientId, int vehicleId, int baseId, int duration) {
-        Client client = clientController.findClientById(clientId);
+        Client client = clientService.findClientById(clientId);
         Vehicle vehicle = vehicleController.findVehicleById(vehicleId);
         Base startBase = baseController.findBaseById(baseId);
+
         if (!client.hasPositiveBalance()) {
             throw new IllegalArgumentException("El usuario no tiene saldo suficiente.");
         }
@@ -47,6 +48,7 @@ public class RentService {
         if (!userHaveBalance(client, vehicle, LocalDateTime.now(), LocalDateTime.now().plusHours(duration))) {
             throw new IllegalArgumentException("El usuario no tiene saldo suficiente para el alquiler.");
         }
+
         vehicle.setAvailable(false);
         Rent rental = new Rent(nextId++, vehicle, client, LocalDateTime.now(), LocalDateTime.now().plusHours(duration),
                 startBase);
@@ -106,19 +108,26 @@ public class RentService {
     private boolean userHaveBalance(Client client, Vehicle vehicle, LocalDateTime startTime, LocalDateTime endTime) {
         double cost = tariffController.getTariff(vehicle.getType())
                 .calculateCost(calculateHoursRented(startTime, endTime), client.isPremium());
-        if (client.getBalance() < cost) {
-            return false;
-        }
-        return true;
+        return client.getBalance() >= cost;
     }
 
     public List<Vehicle> getVehiclesInUseDuring(LocalDateTime start, LocalDateTime end) {
         List<Vehicle> vehiclesInUse = new ArrayList<>();
+
         for (Rent rent : rentRecords) {
-            if (rent.isInUseDuring(start, end)) {
-                vehiclesInUse.add(rent.getVehicle());
+            // Si start y end son null, agregamos todos los vehículos en uso
+            if (start == null || end == null) {
+                if (!rent.getVehicle().isAvailable()) {
+                    vehiclesInUse.add(rent.getVehicle());
+                }
+            } else {
+                if (rent.isInUseDuring(start, end)) {
+                    vehiclesInUse.add(rent.getVehicle());
+                }
             }
         }
+
         return vehiclesInUse;
     }
+
 }

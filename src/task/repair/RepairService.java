@@ -16,8 +16,7 @@ public class RepairService {
   public boolean addRepairTask(String description, int vehicleId, String pickupLocation,
       String dropOffLocation) {
     Vehicle vehicle = vehicleController.findVehicleById(vehicleId);
-    Repair repair = new Repair(0, description, vehicle, pickupLocation, dropOffLocation);
-    return taskController.createRepairTask(repair);
+    return taskController.createRepairTask(description, vehicle.getId(), pickupLocation, dropOffLocation);
   }
 
   public boolean completeRepairTask(int taskId, double repairCost) {

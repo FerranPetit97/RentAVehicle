@@ -28,12 +28,4 @@ public class UserController {
   public boolean deleteUserById(int id) {
     return userService.deleteUserById(id);
   }
-
-  // public boolean promoteToPremium(int userId, double discountPercentage) {
-  //   return userService.promoteToPremium(userId, discountPercentage);
-  // }
-
-  // public List<User> getEligibleForPremium() {
-  //   return userService.getEligibleForPremium();
-  // }
 }

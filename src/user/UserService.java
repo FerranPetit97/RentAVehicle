@@ -82,20 +82,4 @@ public class UserService {
     return users.stream().anyMatch(user -> user.getId() == id || user.getEmail().equalsIgnoreCase(email));
   }
 
-  // public boolean promoteToPremium(int clientId, double discountPercentage) {
-  // Client client = (Client) findUserById(clientId);
-  // if (client == null || !(client instanceof Client)) {
-  // notifyController.log(NotifyCodeEnum.NOT_FOUND, "Client with ID " + clientId +
-  // " not found.");
-  // return false;
-  // }
-
-  // Premium premiumUser = new Premium(client.getId(), client.getName(),
-  // client.getEmail(),
-  // client.getPassword(), discountPercentage);
-  // premiumController.addPremiumUser(premiumUser);
-  // clientController.deleteClientByEmail(client.getEmail());
-  // return true;
-  // }
-
 }

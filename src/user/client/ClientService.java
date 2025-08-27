@@ -10,14 +10,22 @@ import java.util.stream.Collectors;
 
 import user.UserController;
 import vehicle.rental.Rent;
+import vehicle.rental.RentService;
 
 public class ClientService {
   private final List<Client> clients = new ArrayList<>();
 
   private final UserController userController;
+  private RentService rentService; // ya no es final, lo inyectamos luego
 
-  public ClientService(UserController userController) {
+  public ClientService(UserController userController, RentService rentService) {
     this.userController = userController;
+    this.rentService = rentService;
+  }
+
+  // Setter para evitar dependencia circular
+  public void setRentService(RentService rentService) {
+    this.rentService = rentService;
   }
 
   public List<Client> getAllClients() {
@@ -41,8 +49,9 @@ public class ClientService {
     return clients.removeIf(client -> client.getEmail().equalsIgnoreCase(email));
   }
 
-  public List<Client> getEligibleForPremium(List<Rent> rentRecords) {
+  public List<Client> getEligibleForPremium() {
     List<Client> eligibleClients = new ArrayList<>();
+    List<Rent> rentRecords = rentService.getAllRents();
 
     for (Client client : getAllClients()) {
       List<Rent> clientRents = rentRecords.stream()
@@ -136,5 +145,4 @@ public class ClientService {
 
     return false;
   }
-
 }

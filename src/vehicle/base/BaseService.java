@@ -48,7 +48,10 @@ public class BaseService {
       return false;
     }
     if (base != null) {
-      return base.addVehicle(vehicle);
+      base.addVehicle(vehicle);
+      base.setCapacity(base.getCapacity() - 1);
+
+      return true;
     }
     return false;
   }
@@ -56,7 +59,9 @@ public class BaseService {
   public boolean removeVehicleFromBase(int baseId, Vehicle vehicle) {
     Base base = findBaseById(baseId);
     if (base != null) {
-      return base.removeVehicle(vehicle);
+      base.removeVehicle(vehicle);
+      base.setCapacity(base.getCapacity() + 1);
+      return true;
     }
     return false;
   }

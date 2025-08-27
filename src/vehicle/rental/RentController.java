@@ -24,7 +24,14 @@ public class RentController {
     return rentService.getAllRents();
   }
 
+  // Método existente con fechas
   public List<Vehicle> getVehiclesInUseDuring(LocalDateTime start, LocalDateTime end) {
     return rentService.getVehiclesInUseDuring(start, end);
+  }
+
+  // Nuevo método sin parámetros
+  public List<Vehicle> getVehiclesInUse() {
+    // Llama al servicio con null para obtener todos los vehículos en uso
+    return rentService.getVehiclesInUseDuring(null, null);
   }
 }
